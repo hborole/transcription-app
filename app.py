@@ -14,8 +14,7 @@ aws_bucket_name = os.environ.get('AWS_BUCKET_NAME')
 s3 = boto3.client('s3', aws_access_key_id=aws_access_key,
                   aws_secret_access_key=aws_secret_key)
 app = Flask(__name__)
-cors = CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
+CORS(app)
 
 
 @app.route('/api/transcribe', methods=['GET'])
@@ -44,23 +43,10 @@ def transcribe():
         # Delete the file from s3
         s3.delete_object(Bucket=aws_bucket_name, Key=key)
 
-        response = jsonify({'transcript': result["text"]})
-
-        # Enable Access-Control-Allow-Origin
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response, 200
+        return jsonify({'transcript': result["text"]}), 200
     except Exception as e:
         print(e)
-        # Delete the downloaded file
-        os.remove('./assets/' + key)
-
-        # Delete the file from s3
-        s3.delete_object(Bucket=aws_bucket_name, Key=key)
-        response = jsonify({'error': str(e)})
-
-        # Enable Access-Control-Allow-Origin
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response, 500
+        return jsonify({'error': str(e)}), 500
 
 
 if __name__ == '__main__':

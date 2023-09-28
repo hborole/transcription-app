@@ -44,7 +44,11 @@ def transcribe():
         # Delete the file from s3
         s3.delete_object(Bucket=aws_bucket_name, Key=key)
 
-        return jsonify({'transcript': result["text"]}), 200
+        response = jsonify({'transcript': result["text"]})
+
+        # Enable Access-Control-Allow-Origin
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response, 200
     except Exception as e:
         print(e)
         # Delete the downloaded file
@@ -52,7 +56,11 @@ def transcribe():
 
         # Delete the file from s3
         s3.delete_object(Bucket=aws_bucket_name, Key=key)
-        return jsonify({'error': str(e)}), 500
+        response = jsonify({'error': str(e)})
+
+        # Enable Access-Control-Allow-Origin
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response, 500
 
 
 if __name__ == '__main__':

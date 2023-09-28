@@ -5,7 +5,7 @@ import whisper
 from flask_cors import CORS, cross_origin
 
 appname = os.getenv("APP_NAME")
-model = whisper.load_model("base")
+model = whisper.load_model("tiny")
 
 aws_access_key = os.environ.get('AWS_ACCESS_KEY')
 aws_secret_key = os.environ.get('AWS_SECRET_ACCESS_KEY')
@@ -34,7 +34,7 @@ def transcribe():
         print('File downloaded successfully')
 
         # Transcribe the file
-        result = model.transcribe('./assets/' + key)
+        result = model.transcribe('./assets/' + key, fp16=False)
         print(result["text"])
 
         # Delete the downloaded file
